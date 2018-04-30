@@ -2,21 +2,15 @@ var _a = require('electron'), app = _a.app, BrowserWindow = _a.BrowserWindow;
 var electron = require('electron');
 var path = require('path');
 var url = require('url');
-//Parse the .env file for variables
-// const result = require("dotenv").config();
-// //Only auto reload on testing
-// if (result.auto_reload && !result.production) {
-//     //force a hard reset of the windows on file save 
-//     require("electron-reload")(__dirname, {
-//         electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-//     });
-// }
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var win;
+//load the config file
+require('dotenv').config();
+require('electron-reload')(__dirname, {
+    electron: path.join(__dirname, "node_modules", '.bin', 'electron')
+});
 function createWindow() {
-    //const {width,height}= electron.screen.getPrimaryDisplay().workAreaSize.height;
-    //change the window size during debugging
     // Create the browser window.
     win = new BrowserWindow({ width: 800, height: 600 });
     // and load the index.html of the app.
