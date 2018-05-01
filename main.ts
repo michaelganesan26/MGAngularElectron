@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron')
+const { app, BrowserWindow } = require('electron')
 const electron = require('electron');
 const path = require('path')
 const url = require('url')
@@ -10,19 +10,35 @@ let win
 //load the config file
 require('dotenv').config();
 
-require('electron-reload')(__dirname,{
-  electron: path.join(__dirname,"node_modules",'.bin','electron')
+require('electron-reload')(__dirname, {
+  electron: path.join(__dirname, "node_modules", '.bin', 'electron')
 });
 
-function createWindow () {
+function createWindow() {
+  let eWidth: number, eHeight: number;
 
-   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600,
-   webPreferences:{
-     nodeIntegration:true,
-     nodeIntegrationInWorker:true,
-     webSecurity:false
-   }
+  if (process.env.production === 'true') {
+    const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+    eWidth = width;
+    eHeight = height;
+
+  }
+  else {
+    //Test Mode
+    eWidth = parseInt(process.env.debugWidth);
+    eHeight = parseInt(process.env.debugHeight);
+  }
+
+
+
+  // Create the browser window.
+  win = new BrowserWindow({
+    width: eWidth, height: eHeight,
+    webPreferences: {
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true,
+      webSecurity: false
+    }
   })
 
   // and load the index.html of the app.
@@ -33,7 +49,10 @@ function createWindow () {
   }))
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  if (!process.env.production) {
+    win.webContents.openDevTools()
+  }
+
 
   // Emitted when the window is closed.
   win.on('closed', () => {

@@ -11,8 +11,20 @@ require('electron-reload')(__dirname, {
     electron: path.join(__dirname, "node_modules", '.bin', 'electron')
 });
 function createWindow() {
+    var eWidth, eHeight;
+    if (process.env.production === 'true') {
+        var _a = electron.screen.getPrimaryDisplay().workAreaSize, width = _a.width, height = _a.height;
+        eWidth = width;
+        eHeight = height;
+    }
+    else {
+        //Test Mode
+        eWidth = parseInt(process.env.debugWidth);
+        eHeight = parseInt(process.env.debugHeight);
+    }
     // Create the browser window.
-    win = new BrowserWindow({ width: 800, height: 600,
+    win = new BrowserWindow({
+        width: eWidth, height: eHeight,
         webPreferences: {
             nodeIntegration: true,
             nodeIntegrationInWorker: true,
@@ -26,7 +38,9 @@ function createWindow() {
         slashes: true
     }));
     // Open the DevTools.
-    win.webContents.openDevTools();
+    if (!process.env.production) {
+        win.webContents.openDevTools();
+    }
     // Emitted when the window is closed.
     win.on('closed', function () {
         // Dereference the window object, usually you would store windows
